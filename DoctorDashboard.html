@@ -607,6 +607,41 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
 @media (max-width: 768px) {
   .tb-datetime { display: none; }
 }
+
+/* ── v2.1: MOBILE-ONLY DATETIME BAR (বড় করে, আলাদা bar-এ) ── */
+.tb-datetime-mobile { display: none; }
+@media (max-width: 768px) {
+  .tb-datetime-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 10px 12px 12px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--bd);
+  }
+  .tbm-time { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--wht); letter-spacing: 0.5px; }
+  .tbm-dates { font-size: 11px; color: var(--sil2); text-align: center; line-height: 1.6; }
+  .tbm-dates b { color: var(--sil); font-weight: 600; }
+}
+
+/* ── v2.1: SYNC STATUS INDICATOR ── */
+.sync-status {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--sil);
+  background: var(--bg2); border: 1px solid var(--bd);
+  border-radius: 20px; padding: 5px 12px; cursor: pointer;
+  transition: all 0.2s ease; white-space: nowrap;
+}
+.sync-status:hover { border-color: var(--bd2); }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.sync-status.synced .sync-dot { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+.sync-status.syncing .sync-dot { background: var(--warn); animation: syncPulse 1s infinite; }
+.sync-status.error .sync-dot { background: var(--err); }
+@keyframes syncPulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+@media (max-width: 768px) {
+  .sync-status span.sync-label-full { display: none; }
+}
 </style>
 </head>
 <body>
@@ -655,6 +690,10 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
     <span class="tb-clinic" id="tbClinic">Doctor Dashboard</span>
   </div>
   <div class="tb-right">
+    <div class="sync-status synced" id="syncStatus" onclick="refreshAll()" title="ক্লিক করে সাথে সাথে Sync করো">
+      <div class="sync-dot"></div>
+      <span class="sync-label-full" id="syncLabel">Synced</span>
+    </div>
     <div class="tb-datetime">
       <div class="tb-dt-time" id="tbDtTime">—</div>
       <div class="tb-dt-dates" id="tbDtDates">—</div>
@@ -674,6 +713,11 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
   </div>
 </div>
 
+<!-- ══ v2.1: MOBILE-ONLY DATETIME BAR ══ -->
+<div class="tb-datetime-mobile" id="tbDatetimeMobile">
+  <div class="tbm-time" id="tbmTime">—</div>
+  <div class="tbm-dates" id="tbmDates">—</div>
+</div>
 
 <!-- ══ LAYOUT ══ -->
 <div class="layout">
@@ -1195,6 +1239,27 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
 <!-- ══════════════════════════════
   MODAL: ADD TEST RECORD
 ══════════════════════════════ -->
+<!-- ══ v2.1: ENTRY CONFIRM & SAVE — REVIEW MODAL ══ -->
+<div class="modal-overlay" id="confirmEntryModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-hd">
+      <h3 id="confirmEntryTitle">দয়া করে যাচাই করুন</h3>
+      <button class="modal-close" onclick="confirmEntryEdit()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--sil);margin-bottom:14px;">
+        নিচের তথ্যগুলো ভালোভাবে চেক করে নিন। ভুল থাকলে "✏️ Edit" চাপুন, ঠিক থাকলে "✅ Confirm & Save" চাপুন।
+      </p>
+      <div id="confirmEntryBody" style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;"></div>
+      <div id="confirmEntryMsg"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="confirmEntryEdit()">✏️ Edit</button>
+      <button class="btn btn-rose" id="confirmEntrySaveBtn" onclick="confirmEntrySave()">✅ Confirm &amp; Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="testModal">
   <div class="modal" style="max-width:580px;">
     <div class="modal-hd">
@@ -1455,10 +1520,12 @@ document.getElementById('login-pass').addEventListener('keydown', function(e) {
 });
 
 // ── CALL BACKEND (v3.0: session token স্বয়ংক্রিয়ভাবে প্রথম argument হিসেবে যোগ হয়) ──
+// v2.1: প্রতিটা call-এ sync status auto আপডেট হয়
 function call(fn, args, cb, errCb) {
+  setSyncStatus('syncing');
   var runner = google.script.run
-    .withSuccessHandler(function(r){ if(cb) cb(r); })
-    .withFailureHandler(function(e){ if(errCb) errCb(e); else console.error(fn, e); });
+    .withSuccessHandler(function(r){ setSyncStatus('synced'); if(cb) cb(r); })
+    .withFailureHandler(function(e){ setSyncStatus('error'); if(errCb) errCb(e); else console.error(fn, e); });
   runner[fn].apply(runner, [_session.token].concat(args || []));
 }
 
@@ -1584,12 +1651,37 @@ function updateDateTimeWidget() {
   var now = new Date();
   var timeEl = document.getElementById('tbDtTime');
   var datesEl = document.getElementById('tbDtDates');
-  if (timeEl) timeEl.textContent = getTimeWithSecondsString(now);
-  if (datesEl) {
-    datesEl.innerHTML =
-      '<b>বাংলা:</b> ' + getBanglaDateString(now) +
-      ' &nbsp;·&nbsp; <b>Eng:</b> ' + getEnglishDateString(now) +
-      ' &nbsp;·&nbsp; <b>হিজরি:</b> ' + getHijriDateBangla(now);
+  var timeStr = getTimeWithSecondsString(now);
+  var datesHtml =
+    '<b>বাংলা:</b> ' + getBanglaDateString(now) +
+    ' &nbsp;·&nbsp; <b>Eng:</b> ' + getEnglishDateString(now) +
+    ' &nbsp;·&nbsp; <b>হিজরি:</b> ' + getHijriDateBangla(now);
+  if (timeEl) timeEl.textContent = timeStr;
+  if (datesEl) datesEl.innerHTML = datesHtml;
+
+  // ── v2.1: মোবাইল bar-ও একইসাথে আপডেট ──
+  var tbmTime  = document.getElementById('tbmTime');
+  var tbmDates = document.getElementById('tbmDates');
+  if (tbmTime)  tbmTime.textContent = timeStr;
+  if (tbmDates) tbmDates.innerHTML  = datesHtml;
+}
+
+// ── v2.1: SYNC STATUS হেল্পার ──
+function setSyncStatus(state) {
+  var el    = document.getElementById('syncStatus');
+  var label = document.getElementById('syncLabel');
+  if (!el) return;
+  el.classList.remove('synced', 'syncing', 'error');
+  if (state === 'syncing') {
+    el.classList.add('syncing');
+    if (label) label.textContent = 'Syncing...';
+  } else if (state === 'error') {
+    el.classList.add('error');
+    if (label) label.textContent = 'Sync failed — Tap to retry';
+  } else {
+    el.classList.add('synced');
+    var t = new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+    if (label) label.textContent = 'Synced • ' + t;
   }
 }
 
@@ -2122,20 +2214,20 @@ function editAppt(id) {
   openModal('apptModal');
 }
 
+// ── v2.1: STEP 1 — ভ্যালিডেট করে Review Modal দেখানো (এখনো সেভ হয়নি) ──
 function saveAppt() {
   var editId   = getVal('mApptEditId');
   var patName  = getVal('mApptName').trim();
   var phone    = getVal('mApptPhone').trim();
   var date     = getVal('mApptDate');
   var time     = getVal('mApptTime').trim();
+  var status   = getVal('mApptStatus');
+  var reason   = getVal('mApptReason');
 
   if (!patName || !phone || !date || !time) {
     showAl('apptModalMsg', 'err', 'Name, phone, date, and time are required.');
     return;
   }
-
-  var btn = document.getElementById('apptSaveBtn');
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Saving...';
 
   var data = {
     patientId:  getVal('mApptPid').trim() || '',
@@ -2143,19 +2235,41 @@ function saveAppt() {
     phone:      phone,
     date:       date,
     timeSlot:   time,
-    status:     getVal('mApptStatus'),
-    reason:     getVal('mApptReason'),
+    status:     status,
+    reason:     reason,
     editId:     editId
   };
 
+  var rows =
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Patient</span><b>' + patName + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Phone</span><b>' + phone + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Date</span><b>' + date + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Time</span><b>' + time + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Status</span><b>' + (status||'—') + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="color:var(--sil);">Reason</span><b>' + (reason||'—') + '</b></div>';
+
+  document.getElementById('confirmEntryTitle').textContent = 'Appointment যাচাই করুন';
+  document.getElementById('confirmEntryBody').innerHTML = rows;
+  document.getElementById('confirmEntryMsg').innerHTML = '';
+  _pendingEntry = { type: 'appointment', data: data };
+  closeModal('apptModal');
+  openModal('confirmEntryModal');
+}
+
+// ── v2.1: STEP 2 — আসল সেভ (Confirm করার পর কল হয়) ──
+function doSaveAppt(data) {
+  var btn = document.getElementById('confirmEntrySaveBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Saving...';
+
   call('saveAppointmentData', [data], function(r) {
-    btn.disabled = false; btn.innerHTML = 'Save Appointment';
+    btn.disabled = false; btn.innerHTML = '✅ Confirm & Save';
     if (r && r.success) {
-      closeModal('apptModal');
+      closeModal('confirmEntryModal');
       showToast('Appointment saved!', 'ok');
       loadAppointments();
     } else {
-      showAl('apptModalMsg', 'err', (r && r.error) || 'Save failed.');
+      document.getElementById('confirmEntryMsg').innerHTML =
+        '<p style="color:var(--err);font-size:13px;margin-top:10px;">' + ((r && r.error) || 'Save failed.') + '</p>';
     }
   });
 }
@@ -2179,25 +2293,66 @@ function openAddPatient() {
   openModal('ptModal');
 }
 
+// ── v2.1: STEP 1 — ভ্যালিডেট করে Review Modal দেখানো ──
 function savePatient() {
   var name  = getVal('mPtName').trim();
   var phone = getVal('mPtPhone').trim();
   if (!name || !phone) { showAl('ptModalMsg','err','Name and phone are required.'); return; }
 
-  call('savePatientData', [{
-    fullName: name, phone: phone,
-    age: getVal('mPtAge'), gender: getVal('mPtGender'),
-    email: getVal('mPtEmail'), address: getVal('mPtAddr'),
-    notes: getVal('mPtNotes')
-  }], function(r) {
+  var age    = getVal('mPtAge');
+  var gender = getVal('mPtGender');
+  var email  = getVal('mPtEmail');
+  var addr   = getVal('mPtAddr');
+  var notes  = getVal('mPtNotes');
+
+  var data = { fullName: name, phone: phone, age: age, gender: gender, email: email, address: addr, notes: notes };
+
+  var rows =
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Name</span><b>' + name + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Phone</span><b>' + phone + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Age</span><b>' + (age||'—') + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Gender</span><b>' + (gender||'—') + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);"><span style="color:var(--sil);">Email</span><b>' + (email||'—') + '</b></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="color:var(--sil);">Address</span><b>' + (addr||'—') + '</b></div>';
+
+  document.getElementById('confirmEntryTitle').textContent = 'নতুন Patient যাচাই করুন';
+  document.getElementById('confirmEntryBody').innerHTML = rows;
+  document.getElementById('confirmEntryMsg').innerHTML = '';
+  _pendingEntry = { type: 'patient', data: data };
+  closeModal('ptModal');
+  openModal('confirmEntryModal');
+}
+
+// ── v2.1: STEP 2 — আসল সেভ ──
+function doSavePatient(data) {
+  var btn = document.getElementById('confirmEntrySaveBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Saving...';
+
+  call('savePatientData', [data], function(r) {
+    btn.disabled = false; btn.innerHTML = '✅ Confirm & Save';
     if (r && r.success) {
-      closeModal('ptModal');
+      closeModal('confirmEntryModal');
       showToast('Patient registered! ID: ' + (r.patientId||''), 'ok');
       loadPatients();
     } else {
-      showAl('ptModalMsg','err',(r&&r.error)||'Save failed.');
+      document.getElementById('confirmEntryMsg').innerHTML =
+        '<p style="color:var(--err);font-size:13px;margin-top:10px;">' + ((r && r.error) || 'Save failed.') + '</p>';
     }
   });
+}
+
+// ── v2.1: শেয়ার্ড কন্ট্রোলার — Edit / Confirm বাটন দুটোই এটা ব্যবহার করে ──
+var _pendingEntry = { type: null, data: null };
+
+function confirmEntrySave() {
+  if (_pendingEntry.type === 'patient')     doSavePatient(_pendingEntry.data);
+  else if (_pendingEntry.type === 'appointment') doSaveAppt(_pendingEntry.data);
+}
+
+function confirmEntryEdit() {
+  closeModal('confirmEntryModal');
+  if (_pendingEntry.type === 'patient')     openModal('ptModal');
+  else if (_pendingEntry.type === 'appointment') openModal('apptModal');
 }
 
 function viewPatient(pid) {
