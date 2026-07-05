@@ -608,6 +608,84 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
   .tb-datetime { display: none; }
 }
 
+/* ═══════════════════════════════════════════════
+   v2.1 (Phase 5) — FULL MOBILE RESPONSIVE AUDIT FIX
+   কোনো পুরনো ডিজাইন বদলাচ্ছে না, শুধু ছোট স্ক্রিনের জন্য
+   প্রয়োজনীয় override যোগ করা হলো।
+   ═══════════════════════════════════════════════ */
+
+/* ── ১. টপবার ওভারফ্লো ফিক্স (৪৮০px ও তার নিচে) ── */
+@media (max-width: 480px) {
+  .topbar { padding: 0 12px; gap: 8px; }
+  .tb-left { gap: 8px; }
+  .tb-right { gap: 8px; }
+  .tb-pname { display: none; }          /* নাম লুকানো — শুধু অ্যাভাটার থাকবে */
+  .tb-profile { padding: 6px; }          /* নাম না থাকায় প্যাডিং কমানো */
+  .tb-logo-txt { font-size: 14px; }
+  .sync-status { padding: 5px 8px; }
+}
+
+/* ── ২. Modal Header/Footer — narrow স্ক্রিনে wrap করবে, ক্লিপ হবে না ── */
+@media (max-width: 480px) {
+  .modal-hd {
+    flex-wrap: wrap;
+    padding: 16px 18px;
+    gap: 8px;
+  }
+  .modal-hd h3 {
+    font-size: 15px;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  .modal-body { padding: 18px; }
+  .modal-foot {
+    flex-wrap: wrap;
+    padding: 14px 18px;
+  }
+  .modal-foot .btn {
+    flex: 1 1 auto;
+    min-width: 120px;
+    text-align: center;
+  }
+}
+
+/* ── ৩. Upload Card (Test Approvals) — narrow স্ক্রিনে wrap ── */
+@media (max-width: 480px) {
+  .upload-card-hd {
+    flex-wrap: wrap;
+  }
+  .upload-card-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .upload-card-actions .btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* ── ৪. Notification Dropdown — viewport-এর বাইরে না যাওয়া নিশ্চিত করা ── */
+@media (max-width: 480px) {
+  .notif-dropdown {
+    width: calc(100vw - 24px);
+    max-width: 320px;
+    right: -8px;
+  }
+}
+
+/* ── ৫. Sidebar hidden হলে bottom nav ঠিকভাবে দেখানো — নিশ্চিত করা ── */
+@media (max-width: 768px) {
+  .mob-nav { z-index: 300; }
+}
+
+/* ── ৬. Confirm Entry Modal review rows — খুব ছোট স্ক্রিনে টেক্সট wrap ── */
+@media (max-width: 400px) {
+  #confirmEntryBody > div,
+  #ptDetailBody > div {
+    font-size: 12.5px;
+  }
+}
+
 /* ── v2.1: MOBILE-ONLY DATETIME BAR (বড় করে, আলাদা bar-এ) ── */
 .tb-datetime-mobile { display: none; }
 @media (max-width: 768px) {
