@@ -2778,7 +2778,8 @@ function approveTest(id) {
   var dn = (D.profile.DoctorName || 'Dr. Asma');
   call('approveTestRecord', [id, dn], function(r) {
     if (r && r.success) {
-      showToast('Test approved! Patient can now view it.', 'ok');
+      showToast('Test approved!' + (r.emailSent ? ' Email sent.' : ''), 'ok');
+      if (r.whatsappLink) window.open(r.whatsappLink, '_blank'); // WhatsApp prefilled চ্যাট খুলবে
       loadTestRecords();
     } else {
       showToast((r&&r.error)||'Approval failed.', 'err');
@@ -2786,9 +2787,18 @@ function approveTest(id) {
   });
 }
 
+// ── v2.1 (Phase 4): আগে এই ফাংশন সার্ভারে কিছুই পাঠাত না — এখন আসলেই Reject হবে ──
 function rejectTest(id) {
-  if (!confirm('Reject this test record? It will remain as Pending.')) return;
-  showToast('Record not changed — rejection noted.', 'warn');
+  var reason = prompt('Reject করার কারণ লিখো (patient-কে দেখানো হবে না, শুধু internal রেকর্ডের জন্য):', '');
+  if (reason === null) return; // Cancel চাপলে কিছুই হবে না
+  call('rejectTestRecord', [id, reason], function(r) {
+    if (r && r.success) {
+      showToast('Test record rejected.', 'warn');
+      loadTestRecords();
+    } else {
+      showToast((r&&r.error)||'Reject failed.', 'err');
+    }
+  });
 }
 
 // ═══════════════════════════════════════

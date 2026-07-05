@@ -1256,6 +1256,24 @@ function sendTestResultEmail(patientEmail, patientName, patientId, testName, tes
 
 
 // ─────────────────────────────────────────────────────────────
+// v2.1 (Phase 4): TEST RESULT — WhatsApp লিংক তৈরি করা
+// ─────────────────────────────────────────────────────────────
+function buildTestResultWhatsAppLink_(phone, patientName, testName, fileLink) {
+  let cleanPhone = String(phone).replace(/[^0-9]/g, "");
+  if (cleanPhone.length === 11 && cleanPhone.indexOf("0") === 0) {
+    cleanPhone = "88" + cleanPhone;
+  }
+  const msg =
+    "প্রিয় " + (patientName || "") + ",\n\n" +
+    "আপনার " + testName + " রেজাল্ট রেডি হয়ে গেছে এবং Doctor অনুমোদন করেছেন।\n\n" +
+    (fileLink ? "রিপোর্ট দেখতে/ডাউনলোড করতে: " + fileLink + "\n\n" : "") +
+    "ধন্যবাদান্তে,\nClinic Team";
+
+  return "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(msg);
+}
+
+
+// ─────────────────────────────────────────────────────────────
 // AUTOMATED DAILY REMINDER TRIGGER
 // Set up a time-based trigger to run this every day at 9 AM
 // It finds all appointments for TOMORROW and sends reminder emails

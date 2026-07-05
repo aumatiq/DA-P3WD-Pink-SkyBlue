@@ -221,6 +221,18 @@ function clinicStaffUpload(token, patientId, base64, mimeType, fileName, testNam
 function approveTestRecord(token, recordId, doctorName) {
   const result = reviewTestUpload(token, recordId, "Approved", "");
   if (!result.success) return { success: false, error: result.message };
+  return {
+    success: true,
+    message: result.message,
+    emailSent: result.emailSent,
+    whatsappLink: result.whatsappLink,
+  };
+}
+
+// ── v2.1 (Phase 4): নতুন — Reject Adapter (আগে এটাই ছিল না, Reject বাটন কাজই করত না) ──
+function rejectTestRecord(token, recordId, reason) {
+  const result = reviewTestUpload(token, recordId, "Rejected", reason || "");
+  if (!result.success) return { success: false, error: result.message };
   return { success: true, message: result.message };
 }
 

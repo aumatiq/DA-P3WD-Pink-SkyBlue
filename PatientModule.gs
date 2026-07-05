@@ -114,6 +114,29 @@ function findPatientByPhone(phone) {
   return null;
 }
 
+// ───────────────────────── হেল্পার: Patient ID দিয়ে পুরো প্রোফাইল খোঁজা ─────────────────────────
+function findPatientById_(patientId) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Patients");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const idCol = headers.indexOf("PatientID");
+  const nameCol = headers.indexOf("FullName");
+  const phoneCol = headers.indexOf("Phone");
+  const emailCol = headers.indexOf("Email");
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][idCol]).trim() === String(patientId).trim()) {
+      return {
+        patientId: data[i][idCol],
+        fullName: data[i][nameCol],
+        phone: data[i][phoneCol],
+        email: emailCol > -1 ? data[i][emailCol] : "",
+      };
+    }
+  }
+  return null;
+}
+
 // ───────────────────────── PATIENT SEARCH (Admin Dashboard থেকে) ─────────────────────────
 /**
  * নাম, ফোন, বা Patient ID দিয়ে সার্চ করা যাবে (partial match)।
@@ -323,6 +346,10 @@ function reviewTestUpload(token, recordId, decision, remarksIfRejected) {
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
   const idCol = headers.indexOf("RecordID");
+  const patientIdCol = headers.indexOf("PatientID");
+  const testNameCol = headers.indexOf("TestName");
+  const testDateCol = headers.indexOf("TestDate");
+  const fileLinkCol = headers.indexOf("FileLink");
   const statusCol = headers.indexOf("Status");
   const approvedByCol = headers.indexOf("ApprovedBy");
   const approvedDateCol = headers.indexOf("ApprovedDate");
@@ -330,13 +357,44 @@ function reviewTestUpload(token, recordId, decision, remarksIfRejected) {
 
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][idCol]).trim() === String(recordId).trim()) {
+      const patientId = data[i][patientIdCol];
+      const testName  = data[i][testNameCol];
+      const testDate  = data[i][testDateCol];
+      const fileLink  = data[i][fileLinkCol];
+
       sheet.getRange(i + 1, statusCol + 1).setValue(decision);
       sheet.getRange(i + 1, approvedByCol + 1).setValue(session.identifier);
       sheet.getRange(i + 1, approvedDateCol + 1).setValue(new Date());
       if (decision === "Rejected" && remarksIfRejected) {
         sheet.getRange(i + 1, remarksCol + 1).setValue(remarksIfRejected);
       }
-      return { success: true, message: "রেকর্ড " + decision + " করা হয়েছে।" };
+
+      // ── v2.1 (Phase 4): শুধু "Approved" হলেই patient-কে notify করা হবে ──
+      let emailSent = false;
+      let whatsappLink = "";
+      if (decision === "Approved") {
+        const patient = findPatientById_(patientId);
+        if (patient) {
+          if (patient.email) {
+            try {
+              sendTestResultEmail(patient.email, patient.fullName, patientId, testName, testDate, fileLink);
+              emailSent = true;
+            } catch (e) {
+              Logger.log("Test result email error: " + e.message);
+            }
+          }
+          if (patient.phone) {
+            whatsappLink = buildTestResultWhatsAppLink_(patient.phone, patient.fullName, testName, fileLink);
+          }
+        }
+      }
+
+      return {
+        success: true,
+        message: "রেকর্ড " + decision + " করা হয়েছে।",
+        emailSent: emailSent,
+        whatsappLink: whatsappLink,
+      };
     }
   }
 
