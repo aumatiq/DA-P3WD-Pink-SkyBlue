@@ -603,7 +603,17 @@ function getPatientRecords(patientId) {
       testRecords.reverse();
     }
 
-    return { success: true, appointments: appointments, testRecords: testRecords };
+    // ── v2.1 (Phase 3b): Prescriptions যোগ করা (Prescription.gs-এর হেল্পার reuse করা হচ্ছে) ──
+    var prescriptions = [];
+    try {
+      var rxResult = getPrescriptionsForPatientInternal_(pid);
+      if (rxResult && rxResult.success) prescriptions = rxResult.prescriptions;
+    } catch (e) {
+      // Prescriptions শীট এখনো তৈরি না হলেও পোর্টাল যেন ভেঙে না পড়ে
+      prescriptions = [];
+    }
+
+    return { success: true, appointments: appointments, testRecords: testRecords, prescriptions: prescriptions };
   } catch (err) {
     return { success: false, error: err.message };
   }
