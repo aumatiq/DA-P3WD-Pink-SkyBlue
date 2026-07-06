@@ -258,10 +258,14 @@ function updateClinicHours(token, settingsData) {
 // ───────────────────────── হেল্পার: Settings Tab-এ ভ্যালু লেখা/আপডেট করা ─────────────────────────
 function setSettingValue(fieldName, newValue) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Settings");
+  if (!sheet) {
+    throw new Error('"Settings" নামে কোনো শীট খুঁজে পাওয়া যায়নি।');
+  }
   const data = sheet.getDataRange().getValues();
+  const target = String(fieldName).trim();
 
   for (let i = 0; i < data.length; i++) {
-    if (data[i][0] === fieldName) {
+    if (String(data[i][0]).trim() === target) {
       sheet.getRange(i + 1, 2).setValue(newValue);
       return true;
     }

@@ -7,40 +7,100 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0F0A1A">
 <style>
 /* ============================================================
-   AUMATIQ — Doctor Internal Dashboard v1.0 (Part 6)
-   Female Doctor Theme: Deep Plum + Sky Blue + Teal
-   AUMATIQ Brand: bg #0A0A0F | cards #0D1117 | accent #4F46E5
+   AUMATIQ — Doctor Internal Dashboard v4.0 (Part 6 — Retheme)
+   Female Doctor Theme: Deep Plum + Rose + Teal + Indigo + Gold
+   এই ভ্যারিয়েবলগুলো PublicWebsite_v2.html-এর সাথে হুবহু মেলানো —
+   দুই জায়গায় এখন একই ব্র্যান্ড আইডেন্টিটি।
    clinic.drasma@gmail.com
    ============================================================ */
 :root {
-  /* AUMATIQ Core */
-  --bg:     #0A0A0F;
-  --bg2:    #0D1117;
-  --bg3:    #111118;
-  --bg4:    #1A1A2E;
-  --ind:    #4F46E5;
-  --ind2:   #6366F1;
-  --gold:   #F5A623;
-  --gold2:  #F8C85D;
-  --wht:    #F8F9FF;
-  --sil:    #A0A0B0;
-  --sil2:   #606070;
-  /* Doctor Sky Blue Theme accents */
-  --rose:   #0EA5E9;
-  --rose2:  #38BDF8;
-  --teal:   #14B8A6;
+  /* Core backgrounds — deep plum/purple (public site-এর সাথে হুবহু মেলানো) */
+  --bg:     #0F0A1A;
+  --bg2:    #160D24;
+  --bg3:    #1C1230;
+  --bg4:    #221640;
+
+  /* Brand accents */
+  --rose:   #E8608A;   /* Rose pink — primary accent */
+  --rose2:  #F0899F;   /* Lighter rose */
+  --rose3:  #FBCFE8;   /* Blush */
+  --teal:   #14B8A6;   /* Teal — secondary accent */
   --teal2:  #2DD4BF;
+  --gold:   #F5A623;   /* AUMATIQ gold — premium */
+  --gold2:  #F8C85D;
+  --ind:    #7C3AED;   /* Indigo/violet — depth (আগে ছিল #7C3AED) */
+  --ind2:   #A855F7;
+
+  /* Text */
+  --wht:    #FDF8FF;
+  --sil:    #C4B5D8;
+  --sil2:   #7A6892;
+
   /* Status */
-  --ok:     #22C55E;
+  --ok:     #10B981;
   --warn:   #F59E0B;
-  --err:    #EF4444;
-  --info:   #3B82F6;
+  --err:    #F43F5E;
+  --info:   #A855F7;
+
   /* Borders */
-  --bd:     rgba(79,70,229,0.22);
-  --bd2:    rgba(79,70,229,0.45);
-  --bd-r:   rgba(14,165,233,0.22);
+  --bd:     rgba(232,96,138,0.20);
+  --bd2:    rgba(232,96,138,0.42);
+  --bd-r:   rgba(232,96,138,0.25);
+  --bd-teal:rgba(20,184,166,0.25);
+  --bd-ind: rgba(124,58,237,0.25);
+}
+
+/* ═══════════════════════════════════════════════
+   AUTO LIGHT/DARK MODE — সিস্টেম/ব্রাউজারের ডিফল্ট থিম অনুযায়ী
+   কোনো ম্যানুয়াল টগল নেই — ডিভাইসের dark/light সেটিং যা থাকবে,
+   পুরো ড্যাশবোর্ড স্বয়ংক্রিয়ভাবে সেটাই ফলো করবে (prefers-color-scheme)।
+   ব্র্যান্ডের rose/teal/indigo/gold পরিচয় দুই মোডেই অক্ষত থাকে —
+   শুধু background/text/border কনট্রাস্টের জন্য বদলায়।
+   ═══════════════════════════════════════════════ */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:      #FBF7FA;
+    --bg2:     #FFFFFF;
+    --bg3:     #F6EEF4;
+    --bg4:     #F0E4EE;
+    --wht:     #241428;
+    --sil:     #6B5578;
+    --sil2:    #948098;
+    --bd:      rgba(232,96,138,0.22);
+    --bd2:     rgba(232,96,138,0.4);
+    --bd-r:    rgba(232,96,138,0.28);
+    --bd-teal: rgba(13,148,136,0.3);
+    --bd-ind:  rgba(109,40,217,0.28);
+    --rose:    #D6467A;   /* সাদা bg-তে যথেষ্ট contrast পেতে একটু গাঢ় */
+    --rose2:   #C23D6C;
+    --teal:    #0D9488;
+    --teal2:   #0F766E;
+    --ind:     #6D28D9;
+    --ind2:    #7C3AED;
+    --ok:      #059669;
+    --warn:    #B45309;
+    --err:     #E11D48;
+  }
+  body { background: var(--bg); }
+  .topbar { background: rgba(251,247,250,0.92); }
+  .login-card, .modal, .notif-dropdown { box-shadow: 0 16px 44px rgba(90,30,60,0.10); }
+  .fi::placeholder, .fta::placeholder, ::placeholder { color: #A594AA; }
+  .bdg-pend{background:rgba(180,83,9,0.1);color:#92400E;border:1px solid rgba(180,83,9,0.28);}
+  .bdg-comp{background:rgba(5,150,105,0.1);color:#065F46;border:1px solid rgba(5,150,105,0.25);}
+  .bdg-canc{background:rgba(225,29,72,0.08);color:#9F1239;border:1px solid rgba(225,29,72,0.2);}
+  .bdg-rose{background:rgba(214,70,122,0.1);color:#9D174D;border:1px solid var(--bd-r);}
+  .al-ok{background:rgba(5,150,105,0.08);border:1px solid rgba(5,150,105,0.3);color:#065F46;}
+  .al-err{background:rgba(225,29,72,0.08);border:1px solid rgba(225,29,72,0.3);color:#9F1239;}
+  .al-warn{background:rgba(180,83,9,0.08);border:1px solid rgba(180,83,9,0.3);color:#92400E;}
+  .btn-ok{background:rgba(5,150,105,0.1);color:#065F46;border:1px solid rgba(5,150,105,0.3);}
+  .btn-ok:hover{background:rgba(5,150,105,0.18);}
+  .btn-err{background:rgba(225,29,72,0.08);color:#9F1239;border:1px solid rgba(225,29,72,0.3);}
+  .btn-err:hover{background:rgba(225,29,72,0.16);}
+  .modal-close:hover{background:rgba(225,29,72,0.08);color:#9F1239;}
+  #filePreviewFrame{background:#fff;}
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -53,7 +113,7 @@ body{
 
 /* ── TOPBAR ── */
 .topbar{
-  background:rgba(10,10,15,0.96);
+  background:rgba(15,10,26,0.96);
   backdrop-filter:blur(16px);
   border-bottom:1px solid var(--bd);
   padding:0 24px;height:60px;
@@ -62,7 +122,7 @@ body{
   position:sticky;top:0;z-index:200;
   flex-shrink:0;
 }
-.tb-left{display:flex;align-items:center;gap:12px;}
+.tb-left{display:flex;align-items:center;gap:12px;min-width:0;flex:1;}
 .tb-logo{
   display:flex;align-items:center;gap:9px;text-decoration:none;
 }
@@ -71,7 +131,9 @@ body{
   background:linear-gradient(135deg,var(--rose),var(--ind));
   border-radius:8px;display:flex;align-items:center;
   justify-content:center;font-size:16px;
+  box-shadow:0 4px 14px rgba(232,96,138,0.35);
 }
+.tb-logo-icon svg{width:17px;height:17px;display:block;}
 .tb-logo-txt{
   font-family:'Syne',sans-serif;font-size:16px;font-weight:800;
   color:var(--wht);letter-spacing:0.5px;
@@ -79,7 +141,11 @@ body{
 .tb-logo-txt em{color:var(--rose);font-style:normal;}
 .tb-divider{width:1px;height:28px;background:var(--bd);}
 .tb-clinic{
-  font-size:13px;color:var(--sil);font-weight:500;
+  font-family:'Syne',sans-serif;
+  font-size:15px;color:var(--wht);font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  min-width:0;letter-spacing:0.3px;
+  text-shadow:0 0 14px rgba(232,96,138,0.35);
 }
 .tb-right{display:flex;align-items:center;gap:12px;}
 .tb-time{
@@ -140,14 +206,14 @@ body{
   text-decoration:none;border:none;background:none;
   width:calc(100% - 16px);text-align:left;
 }
-.sb-item:hover{background:rgba(79,70,229,0.08);color:var(--wht);}
+.sb-item:hover{background:rgba(124,58,237,0.08);color:var(--wht);}
 .sb-item.active{
-  background:rgba(79,70,229,0.15);color:var(--wht);
+  background:rgba(124,58,237,0.15);color:var(--wht);
   border:1px solid var(--bd);
 }
 .sb-item.active .sb-icon{color:var(--ind2);}
 .sb-item.rose-active{
-  background:rgba(14,165,233,0.1);color:var(--wht);
+  background:rgba(232,96,138,0.1);color:var(--wht);
   border:1px solid var(--bd-r);
 }
 .sb-item.rose-active .sb-icon{color:var(--rose2);}
@@ -209,12 +275,12 @@ body{
   border:1px solid var(--bd);
 }
 .btn-out:hover{color:var(--wht);border-color:var(--bd2);}
-.btn-gold{background:var(--gold);color:#0A0A0F;font-weight:700;}
+.btn-gold{background:var(--gold);color:#0F0A1A;font-weight:700;}
 .btn-gold:hover{background:var(--gold2);}
-.btn-ok{background:rgba(34,197,94,0.15);color:#86EFAC;border:1px solid rgba(34,197,94,0.3);}
-.btn-ok:hover{background:rgba(34,197,94,0.25);}
-.btn-err{background:rgba(239,68,68,0.12);color:#FCA5A5;border:1px solid rgba(239,68,68,0.3);}
-.btn-err:hover{background:rgba(239,68,68,0.22);}
+.btn-ok{background:rgba(16,185,129,0.15);color:#6EE7B7;border:1px solid rgba(16,185,129,0.3);}
+.btn-ok:hover{background:rgba(16,185,129,0.25);}
+.btn-err{background:rgba(244,63,94,0.12);color:#FDA4AF;border:1px solid rgba(244,63,94,0.3);}
+.btn-err:hover{background:rgba(244,63,94,0.22);}
 .btn-sm{padding:7px 13px;font-size:12px;min-height:32px;}
 .btn:disabled{opacity:0.45;cursor:not-allowed;transform:none!important;}
 
@@ -235,18 +301,18 @@ body{
 .stat-card.c-teal::before{background:linear-gradient(90deg,var(--teal),var(--teal2));}
 .stat-card.c-ind::before{background:linear-gradient(90deg,var(--ind),var(--ind2));}
 .stat-card.c-gold::before{background:linear-gradient(90deg,var(--gold),var(--gold2));}
-.stat-card.c-ok::before{background:linear-gradient(90deg,var(--ok),#4ADE80);}
+.stat-card.c-ok::before{background:linear-gradient(90deg,var(--ok),#34D399);}
 .stat-card:hover{border-color:var(--bd2);transform:translateY(-2px);}
 .stat-icon{
   width:40px;height:40px;border-radius:10px;
   display:flex;align-items:center;justify-content:center;
   font-size:20px;margin-bottom:14px;
 }
-.stat-card.c-rose .stat-icon{background:rgba(14,165,233,0.12);border:1px solid rgba(14,165,233,0.25);}
+.stat-card.c-rose .stat-icon{background:rgba(232,96,138,0.12);border:1px solid rgba(232,96,138,0.25);}
 .stat-card.c-teal .stat-icon{background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.25);}
-.stat-card.c-ind  .stat-icon{background:rgba(79,70,229,0.12);border:1px solid var(--bd);}
+.stat-card.c-ind  .stat-icon{background:rgba(124,58,237,0.12);border:1px solid var(--bd);}
 .stat-card.c-gold .stat-icon{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);}
-.stat-card.c-ok   .stat-icon{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);}
+.stat-card.c-ok   .stat-icon{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);}
 .stat-num{
   font-family:'Syne',sans-serif;font-size:30px;font-weight:800;line-height:1;
 }
@@ -287,12 +353,12 @@ thead th{
 }
 tbody td{
   padding:12px 14px;font-size:13px;
-  border-bottom:1px solid rgba(79,70,229,0.06);
+  border-bottom:1px solid rgba(124,58,237,0.06);
   vertical-align:middle;
 }
 tbody td:first-child{color:var(--wht);font-weight:500;}
 tbody tr:last-child td{border-bottom:none;}
-tbody tr:hover td{background:rgba(79,70,229,0.04);}
+tbody tr:hover td{background:rgba(124,58,237,0.04);}
 
 /* ── BADGES ── */
 .bdg{
@@ -303,10 +369,10 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
 }
 .bdg-pend{background:rgba(245,158,11,0.15);color:#FDE68A;border:1px solid rgba(245,158,11,0.3);}
 .bdg-conf{background:rgba(20,184,166,0.12);color:var(--teal2);border:1px solid rgba(20,184,166,0.25);}
-.bdg-comp{background:rgba(34,197,94,0.12);color:#86EFAC;border:1px solid rgba(34,197,94,0.25);}
-.bdg-canc{background:rgba(239,68,68,0.1);color:#FCA5A5;border:1px solid rgba(239,68,68,0.2);}
-.bdg-appr{background:rgba(79,70,229,0.12);color:var(--ind2);border:1px solid var(--bd);}
-.bdg-rose{background:rgba(14,165,233,0.12);color:var(--rose2);border:1px solid var(--bd-r);}
+.bdg-comp{background:rgba(16,185,129,0.12);color:#6EE7B7;border:1px solid rgba(16,185,129,0.25);}
+.bdg-canc{background:rgba(244,63,94,0.1);color:#FDA4AF;border:1px solid rgba(244,63,94,0.2);}
+.bdg-appr{background:rgba(124,58,237,0.12);color:var(--ind2);border:1px solid var(--bd);}
+.bdg-rose{background:rgba(232,96,138,0.12);color:var(--rose2);border:1px solid var(--bd-r);}
 
 /* ── SEARCH / FILTER BAR ── */
 .sf-bar{
@@ -351,7 +417,7 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
 }
 .fi:focus,.fs:focus,.fta:focus{
   border-color:var(--rose);
-  box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  box-shadow:0 0 0 3px rgba(232,96,138,0.12);
 }
 .fi::placeholder,.fta::placeholder{color:var(--sil2);}
 .fs option{background:var(--bg2);}
@@ -383,7 +449,7 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
   display:flex;align-items:center;justify-content:center;
   transition:all 0.2s;
 }
-.modal-close:hover{background:rgba(239,68,68,0.1);color:#FCA5A5;}
+.modal-close:hover{background:rgba(244,63,94,0.1);color:#FDA4AF;}
 .modal-body{padding:24px;}
 .modal-foot{
   display:flex;justify-content:flex-end;gap:10px;
@@ -396,9 +462,9 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
   font-size:13px;margin-bottom:14px;line-height:1.6;
   display:flex;align-items:flex-start;gap:8px;
 }
-.al-ok{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:#86EFAC;}
-.al-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5;}
-.al-inf{background:rgba(79,70,229,0.1);border:1px solid var(--bd2);color:var(--ind2);}
+.al-ok{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#6EE7B7;}
+.al-err{background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);color:#FDA4AF;}
+.al-inf{background:rgba(124,58,237,0.1);border:1px solid var(--bd2);color:var(--ind2);}
 .al-warn{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#FDE68A;}
 
 /* ── TODAY SCHEDULE ── */
@@ -477,7 +543,7 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
 
 /* ── QUICK NOTE ── */
 .quick-note{
-  padding:14px;background:rgba(14,165,233,0.05);
+  padding:14px;background:rgba(232,96,138,0.05);
   border:1px solid var(--bd-r);border-radius:10px;
   font-size:13px;color:var(--sil);font-style:italic;
   margin-top:10px;line-height:1.6;
@@ -498,7 +564,7 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
 /* ── MOBILE NAV (bottom) ── */
 .mob-nav{
   display:none;position:fixed;bottom:0;left:0;right:0;
-  background:rgba(13,17,23,0.97);
+  background:rgba(22,13,36,0.97);
   backdrop-filter:blur(12px);
   border-top:1px solid var(--bd);
   padding:8px 0 env(safe-area-inset-bottom,8px);
@@ -533,7 +599,7 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
 /* ── COMMUNICATIONS LOG ── */
 .comm-item{
   display:flex;gap:14px;padding:14px 0;
-  border-bottom:1px solid rgba(79,70,229,0.06);
+  border-bottom:1px solid rgba(124,58,237,0.06);
 }
 .comm-item:last-child{border-bottom:none;}
 .comm-dot{
@@ -726,7 +792,7 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
   .rx-med-row { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; }
   .rx-med-row button { grid-column: span 2; }
 }
-.rx-med-remove { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #EF4444; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 13px; }
+.rx-med-remove { background: rgba(244,63,94,0.12); border: 1px solid rgba(244,63,94,0.3); color: #F43F5E; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 13px; }
 #filePreviewFrame { display: block; }
 .rx-history-item { padding: 12px 0; border-bottom: 1px solid var(--bd); }
 .rx-history-item:last-child { border-bottom: none; }
@@ -773,7 +839,12 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
 <div class="topbar">
   <div class="tb-left">
     <a href="#" class="tb-logo">
-      <div class="tb-logo-icon">🌸</div>
+      <div class="tb-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3 L20 20 L15.5 20 L12 12.5 L8.5 20 L4 20 Z" fill="#FDF8FF"/>
+          <path d="M12 3 L20 20 L15.5 20 L12 12.5 Z" fill="#FDF8FF" fill-opacity="0.55"/>
+        </svg>
+      </div>
       <span class="tb-logo-txt">AUMATIQ<em>.</em></span>
     </a>
     <div class="tb-divider"></div>
@@ -1440,14 +1511,14 @@ tbody tr:hover td{background:rgba(79,70,229,0.04);}
       <div class="fg" style="margin-bottom:14px;">
         <label class="fl">Scan / Report File *</label>
         <div id="testUploadZone" style="
-          border:2px dashed rgba(14,165,233,0.4);
+          border:2px dashed rgba(232,96,138,0.4);
           border-radius:12px; padding:24px;
           text-align:center; cursor:pointer;
-          background:rgba(14,165,233,0.03);
+          background:rgba(232,96,138,0.03);
           transition:all 0.2s;
         " onclick="document.getElementById('mTstFileInput').click()"
            ondragover="event.preventDefault();this.style.borderColor='var(--rose)';"
-           ondragleave="this.style.borderColor='rgba(14,165,233,0.4)';"
+           ondragleave="this.style.borderColor='rgba(232,96,138,0.4)';"
            ondrop="handleTestFileDrop(event);">
           <input type="file" id="mTstFileInput"
                  accept=".pdf,.jpg,.jpeg,.png,.webp,.heic"
@@ -1607,14 +1678,22 @@ function doLogin() {
   }
 
   var btn = document.querySelector('#login-screen .btn-ind');
-  btn.textContent = 'Signing in...';
-  btn.disabled = true;
+
+  // ── v3.2: এই পেজ যদি Apps Script Web App হিসেবে না খুলে সরাসরি ফাইল থেকে
+  //    (বা ভুল URL থেকে) খোলা হয়, google.script.run থাকে না — আগে এখানে
+  //    সাইলেন্টলি কিছুই হতো না, বাটনে ক্লিক করলে মনে হতো "লগইন কাজ করছে না"।
+  if (typeof google === 'undefined' || !google.script || !google.script.run) {
+    errEl.innerHTML = 'এই পেজটা সঠিক Apps Script Web App URL দিয়ে খোলা হয়নি (<code>?page=dashboard</code> যোগ করে দেখো)। সরাসরি ফাইল থেকে খুললে লগইন কাজ করবে না।';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  if (btn) { btn.textContent = 'Signing in...'; btn.disabled = true; }
 
   google.script.run
     .withSuccessHandler(function(result) {
-      btn.textContent = 'Sign In';
-      btn.disabled = false;
-      if (result.success) {
+      if (btn) { btn.textContent = 'Sign In'; btn.disabled = false; }
+      if (result && result.success) {
         _session.token = result.token;
         _session.role  = result.role;
         saveSessionToStorage(result.token, result.role);   // ← নতুন
@@ -1629,14 +1708,14 @@ function doLogin() {
         var savedBtn = document.querySelector('.sb-item[onclick*="\'' + savedTab + '\'"]');
         navTo(savedTab, savedBtn);
       } else {
-        errEl.textContent = result.message || 'Login failed.';
+        errEl.textContent = (result && result.message) || 'Login failed.';
         errEl.style.display = 'block';
       }
     })
     .withFailureHandler(function(e) {
-      btn.textContent = 'Sign In';
-      btn.disabled = false;
-      errEl.textContent = 'Connection error. আবার চেষ্টা করো।';
+      if (btn) { btn.textContent = 'Sign In'; btn.disabled = false; }
+      // ── v3.2: raw error message দেখানো হচ্ছে যাতে আসল কারণ বোঝা যায় ──
+      errEl.textContent = 'Connection error: ' + ((e && e.message) || 'আবার চেষ্টা করো।');
       errEl.style.display = 'block';
     })
     .roleLogin(_selectedRole, pass);
@@ -1684,7 +1763,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
   // ── v2.1: Refresh/reopen করলে আগের session থাকলে সরাসরি dashboard-এ ঢুকে যাওয়া ──
   var saved = loadSessionFromStorage();
-  if (saved) {
+  if (saved && typeof google !== 'undefined' && google.script && google.script.run) {
     google.script.run
       .withSuccessHandler(function(result) {
         if (result.valid) {
@@ -2706,7 +2785,7 @@ function resetTestUploadZone() {
   if (pr)  pr.style.display = 'none';
   if (fi)  fi.value = '';
   var zone = document.getElementById('testUploadZone');
-  if (zone) zone.style.borderColor = 'rgba(14,165,233,0.4)';
+  if (zone) zone.style.borderColor = 'rgba(232,96,138,0.4)';
   var btn = document.getElementById('testSaveBtn');
   if (btn) { btn.disabled = false; btn.innerHTML = '📤 Upload & Save Record'; }
 }
@@ -2719,7 +2798,7 @@ function handleTestFileSelect(input) {
 function handleTestFileDrop(event) {
   event.preventDefault();
   var zone = document.getElementById('testUploadZone');
-  if (zone) zone.style.borderColor = 'rgba(14,165,233,0.4)';
+  if (zone) zone.style.borderColor = 'rgba(232,96,138,0.4)';
   var files = event.dataTransfer.files;
   if (files && files[0]) processTestFile(files[0]);
 }
@@ -3003,7 +3082,7 @@ document.addEventListener('keydown', function(e){
 function showToast(msg, type) {
   var existing = document.getElementById('toast-el');
   if (existing) existing.remove();
-  var colors = { ok:'#22C55E', err:'#EF4444', warn:'#F59E0B', info:'var(--ind2)' };
+  var colors = { ok:'#10B981', err:'#F43F5E', warn:'#F59E0B', info:'var(--ind2)' };
   var t = document.createElement('div');
   t.id = 'toast-el';
   t.style.cssText = 'position:fixed;bottom:90px;right:20px;z-index:9999;padding:12px 20px;background:var(--bg2);border:1px solid ' + (colors[type]||'var(--bd)') + ';border-radius:10px;font-size:13px;font-weight:600;color:' + (colors[type]||'var(--wht)') + ';box-shadow:0 8px 24px rgba(0,0,0,0.3);max-width:320px;animation:toastIn 0.3s ease;';

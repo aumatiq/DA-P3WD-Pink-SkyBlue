@@ -127,10 +127,10 @@ function generatePrescriptionPdf_(data, profile, prescriptionId, doctorName, dat
   const html =
     '<html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;padding:0;margin:0;color:#1A1A2E;">' +
     '<div style="padding:36px 44px;">' +
-      '<table width="100%" style="border-bottom:3px solid #0EA5E9;padding-bottom:16px;margin-bottom:24px;">' +
+      '<table width="100%" style="border-bottom:3px solid #E8608A;padding-bottom:16px;margin-bottom:24px;">' +
         '<tr>' +
         '<td><div style="font-size:20px;font-weight:800;">' + clinicName + '</div>' +
-        '<div style="font-size:12px;color:#0EA5E9;font-weight:600;">' + specialty + '</div></td>' +
+        '<div style="font-size:12px;color:#E8608A;font-weight:600;">' + specialty + '</div></td>' +
         '<td align="right"><div style="font-size:11px;color:#666;">' + address + '</div>' +
         '<div style="font-size:11px;color:#666;">' + phone + '</div></td>' +
         '</tr>' +
@@ -138,7 +138,7 @@ function generatePrescriptionPdf_(data, profile, prescriptionId, doctorName, dat
       '<table width="100%" style="margin-bottom:20px;">' +
         '<tr>' +
         '<td><div style="font-size:11px;color:#888;text-transform:uppercase;">Prescription ID</div>' +
-        '<div style="font-size:14px;font-weight:700;color:#0EA5E9;">' + prescriptionId + '</div></td>' +
+        '<div style="font-size:14px;font-weight:700;color:#E8608A;">' + prescriptionId + '</div></td>' +
         '<td><div style="font-size:11px;color:#888;text-transform:uppercase;">Date</div>' +
         '<div style="font-size:14px;font-weight:700;">' + dateStr + '</div></td>' +
         '<td><div style="font-size:11px;color:#888;text-transform:uppercase;">Patient</div>' +
@@ -152,12 +152,12 @@ function generatePrescriptionPdf_(data, profile, prescriptionId, doctorName, dat
       '<div style="margin-bottom:20px;">' +
         '<div style="font-size:12px;color:#888;text-transform:uppercase;font-weight:700;margin-bottom:8px;">℞ Medicines</div>' +
         '<table width="100%" style="border-collapse:collapse;">' +
-        '<tr style="background:#0EA5E9;color:#fff;"><td style="padding:8px 10px;font-size:12px;">#</td><td style="padding:8px 10px;font-size:12px;">Medicine</td><td style="padding:8px 10px;font-size:12px;">Dosage</td><td style="padding:8px 10px;font-size:12px;">Duration</td><td style="padding:8px 10px;font-size:12px;">Instructions</td></tr>' +
+        '<tr style="background:#E8608A;color:#fff;"><td style="padding:8px 10px;font-size:12px;">#</td><td style="padding:8px 10px;font-size:12px;">Medicine</td><td style="padding:8px 10px;font-size:12px;">Dosage</td><td style="padding:8px 10px;font-size:12px;">Duration</td><td style="padding:8px 10px;font-size:12px;">Instructions</td></tr>' +
         medRows +
         '</table>' +
       '</div>' +
       (data.advice ? '<div style="margin-bottom:24px;"><div style="font-size:12px;color:#888;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Advice</div><div style="font-size:13px;">' + data.advice + '</div></div>' : '') +
-      (data.nextVisit ? '<div style="margin-bottom:24px;"><div style="font-size:12px;color:#888;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Next Visit</div><div style="font-size:13px;font-weight:700;color:#0EA5E9;">' + data.nextVisit + '</div></div>' : '') +
+      (data.nextVisit ? '<div style="margin-bottom:24px;"><div style="font-size:12px;color:#888;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Next Visit</div><div style="font-size:13px;font-weight:700;color:#E8608A;">' + data.nextVisit + '</div></div>' : '') +
       '<div style="margin-top:50px;border-top:1px solid #ddd;padding-top:16px;text-align:right;">' +
         '<div style="font-size:14px;font-weight:700;">' + doctorName + '</div>' +
         '<div style="font-size:11px;color:#888;">' + specialty + '</div>' +
@@ -216,7 +216,7 @@ function sendPrescriptionEmail_(patientEmail, patientName, patientId, data, file
     '<table width="100%" cellpadding="0" cellspacing="0" border="0">' + medRowsHtml + '</table>' +
     '</td></tr>' +
     '<tr><td style="background:#FFFFFF;padding:0 40px 32px;text-align:center;">' +
-    '<a href="' + (fileLink || "#") + '" style="display:inline-block;background:linear-gradient(135deg,#0EA5E9,#7C3AED);color:#FFFFFF;font-family:Arial,sans-serif;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;text-decoration:none;">℞ View Full Prescription (PDF) →</a>' +
+    '<a href="' + (fileLink || "#") + '" style="display:inline-block;background:linear-gradient(135deg,#E8608A,#7C3AED);color:#FFFFFF;font-family:Arial,sans-serif;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;text-decoration:none;">℞ View Full Prescription (PDF) →</a>' +
     '</td></tr>' +
     '<tr><td style="padding:0;">' + emailFooter_(profile.ContactEmail || t.clinicEmail, profile.ContactPhone, profile.ClinicAddress) + '</td></tr>' +
     '</table></td></tr></table></body></html>';

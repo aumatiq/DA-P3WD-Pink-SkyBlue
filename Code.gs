@@ -97,7 +97,7 @@ function setupCategoriesTab(sheet) {
   ];
 
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#4F46E5").setFontColor("#FFFFFF");
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#7C3AED").setFontColor("#FFFFFF");
   sheet.getRange(2, 1, data.length, headers.length).setValues(data);
 
   sheet.setFrozenRows(1);
@@ -132,7 +132,7 @@ function setupPatientsTab(sheet, categoriesSheet) {
   const headers = ["PatientID", "FullName", "Phone", "Age", "Gender", "Address", "RegisteredDate", "LastVisit", "Notes", "Email"];
 
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#4F46E5").setFontColor("#FFFFFF");
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#7C3AED").setFontColor("#FFFFFF");
   sheet.setFrozenRows(1);
 
   const genderValues = getActiveCategoryValues(categoriesSheet, "Gender");
@@ -150,7 +150,7 @@ function setupAppointmentsTab(sheet, categoriesSheet) {
   const headers = ["AppointmentID", "PatientID", "Date", "TimeSlot", "Reason", "Status", "CreatedAt"];
 
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#4F46E5").setFontColor("#FFFFFF");
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#7C3AED").setFontColor("#FFFFFF");
   sheet.setFrozenRows(1);
 
   // Status কলাম (F) এ Dropdown — Categories Tab থেকে AppointmentStatus
@@ -169,7 +169,7 @@ function setupTestRecordsTab(sheet, categoriesSheet) {
   const headers = ["RecordID", "PatientID", "TestName", "TestDate", "FileLink", "UploadedBy", "Status", "ApprovedBy", "ApprovedDate", "Remarks"];
 
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#4F46E5").setFontColor("#FFFFFF");
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#7C3AED").setFontColor("#FFFFFF");
   sheet.setFrozenRows(1);
 
   // TestName কলাম (C) এ Dropdown — Categories Tab থেকে
@@ -195,7 +195,7 @@ function setupFinanceTab(sheet, categoriesSheet) {
   const headers = ["EntryID", "Date", "Type", "Category", "PatientID", "Amount", "Notes"];
 
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#4F46E5").setFontColor("#FFFFFF");
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#7C3AED").setFontColor("#FFFFFF");
   sheet.setFrozenRows(1);
 
   // Type কলাম (C) — FinanceType

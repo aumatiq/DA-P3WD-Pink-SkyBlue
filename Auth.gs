@@ -14,11 +14,19 @@
 const SESSION_DURATION_MINUTES = 15; // লগইন token কতক্ষণ valid থাকবে (১৫ মিনিট, sliding)
 
 // ───────────────────────── হেল্পার: Settings Tab থেকে ভ্যালু পড়া ─────────────────────────
+// v3.2 — বাগ ফিক্স: "Settings" শীট খুঁজে না পেলে আগে raw exception থ্রো হতো
+// (Cannot read properties of null...) যেটা ফ্রন্টএন্ডে জেনেরিক "Connection error"
+// হিসেবে দেখাতো — লগইন কেন ফেইল হচ্ছে বোঝার কোনো উপায় ছিল না। এখন স্পষ্ট বার্তা দেয়।
+// key কলামের extra space/case মিসম্যাচ যাতে সমস্যা না করে, সেজন্য trim করে মেলানো হয়।
 function getSettingValue(fieldName) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Settings");
+  if (!sheet) {
+    throw new Error('"Settings" নামে কোনো শীট খুঁজে পাওয়া যায়নি। স্প্রেডশিটে শীটের নাম ঠিক আছে কিনা (case-sensitive) চেক করো।');
+  }
   const data = sheet.getDataRange().getValues();
+  const target = String(fieldName).trim();
   for (let i = 0; i < data.length; i++) {
-    if (data[i][0] === fieldName) {
+    if (String(data[i][0]).trim() === target) {
       return data[i][1];
     }
   }
@@ -27,41 +35,46 @@ function getSettingValue(fieldName) {
 
 // ───────────────────────── ROLE LOGIN (Doctor বা Assistant — Password-only) ─────────────────────────
 function roleLogin(role, password) {
-  const validRoles = ["DOCTOR", "RECEPTIONIST"];
+  try {
+    const validRoles = ["DOCTOR", "RECEPTIONIST"];
 
-  if (!role || validRoles.indexOf(role) === -1) {
-    return { success: false, message: "সঠিক Role বাছাই করো (Doctor / Assistant)।" };
-  }
-  if (!password || String(password).trim() === "") {
-    return { success: false, message: "Password দিতে হবে।" };
-  }
+    if (!role || validRoles.indexOf(role) === -1) {
+      return { success: false, message: "সঠিক Role বাছাই করো (Doctor / Assistant)।" };
+    }
+    if (!password || String(password).trim() === "") {
+      return { success: false, message: "Password দিতে হবে।" };
+    }
 
-  const inputPass = String(password).trim();
+    const inputPass = String(password).trim();
 
-  const storedPassword = role === "DOCTOR"
-    ? String(getSettingValue("DoctorPassword") || "").trim()
-    : String(getSettingValue("ReceptionistPassword") || "").trim();
+    const storedPassword = role === "DOCTOR"
+      ? String(getSettingValue("DoctorPassword") || "").trim()
+      : String(getSettingValue("ReceptionistPassword") || "").trim();
 
-  if (!storedPassword) {
+    if (!storedPassword) {
+      return {
+        success: false,
+        message: "এই Role-এর জন্য এখনো কোনো Password সেট করা নেই। Settings শীটে DoctorPassword/ReceptionistPassword রো-টা আছে কিনা চেক করো।"
+      };
+    }
+
+    if (inputPass !== storedPassword) {
+      return { success: false, message: "ভুল Password। আবার চেষ্টা করো।" };
+    }
+
+    const token = createSession(role, role === "DOCTOR" ? "doctor" : "assistant");
     return {
-      success: false,
-      message: "এই Role-এর জন্য এখনো কোনো Password সেট করা নেই। Doctor-কে Settings ট্যাব থেকে Password সেট করতে বলো।"
+      success: true,
+      token: token,
+      role: role,
+      message: role === "DOCTOR"
+        ? "লগইন সফল হয়েছে। (Doctor — Full Access)"
+        : "লগইন সফল হয়েছে। (Assistant — Limited Access, Finance ও Settings দেখা যাবে না)"
     };
+  } catch (e) {
+    // ── v3.2: raw server exception কখনোই সরাসরি ব্রাউজারে যাবে না, স্পষ্ট বার্তা দেবে ──
+    return { success: false, message: "সার্ভার এরর: " + e.message };
   }
-
-  if (inputPass !== storedPassword) {
-    return { success: false, message: "ভুল Password। আবার চেষ্টা করো।" };
-  }
-
-  const token = createSession(role, role === "DOCTOR" ? "doctor" : "assistant");
-  return {
-    success: true,
-    token: token,
-    role: role,
-    message: role === "DOCTOR"
-      ? "লগইন সফল হয়েছে। (Doctor — Full Access)"
-      : "লগইন সফল হয়েছে। (Assistant — Limited Access, Finance ও Settings দেখা যাবে না)"
-  };
 }
 
 // ───────────────────────── PASSWORD পরিবর্তন (শুধু Doctor করতে পারবে) ─────────────────────────
