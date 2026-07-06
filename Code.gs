@@ -272,12 +272,23 @@ function setupSettingsTab(sheet) {
 // ─────────────────────────────────────────────────────────────
 // 5.1  doGet() — Web App URL Router
 // ─────────────────────────────────────────────────────────────
-function doGet(e) {
-  var page = (e && e.parameter && e.parameter.page) ? e.parameter.page : 'home';
 
-  // ── FIX (v2.0): doctor dashboard আগে কখনো serve হতো না ──
-  // ?page=dashboard দিলে এখন DoctorDashboard.html serve হবে।
-  // Apps Script Editor-এ HTML file-এর নাম অবশ্যই ঠিক "DoctorDashboard" (case-sensitive) হতে হবে।
+function doGet(e) {
+  var params = (e && e.parameter) ? e.parameter : {};
+
+  // ── PWA: manifest.json রুট (PWASetup.gs ফাইলে ফাংশনগুলো আছে) ──
+  if (params.file === 'manifest') {
+    return ContentService.createTextOutput(JSON.stringify(getPublicManifestJson_()))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  if (params.file === 'manifest-dashboard') {
+    return ContentService.createTextOutput(JSON.stringify(getDashboardManifestJson_()))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // ── FIX: "page" এবং পুরনো "view" — দুটো parameter নামই এখন কাজ করবে ──
+  var page = params.page || params.view || 'home';
+
   if (page === 'dashboard') {
     return HtmlService.createHtmlOutputFromFile('DoctorDashboard')
       .setTitle('Clinic Dashboard — Sign In')
@@ -287,7 +298,7 @@ function doGet(e) {
 
   var template = HtmlService.createTemplateFromFile('PublicWebsite');
   template.currentPage     = page;
-  template.patientIdParam  = (e && e.parameter && e.parameter.pid)  ? e.parameter.pid  : '';
+  template.patientIdParam  = params.pid || '';
 
   return template.evaluate()
     .setTitle('Dr. Asma — Clinic & Women\'s Health')
